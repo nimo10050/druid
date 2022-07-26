@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.apache.ibatis.example.mapper.MyBlogMapper">
+
+  <select id="selectMyBlog"
+          parameterType="org.apache.ibatis.example.domain.MyBlog"
+          resultType="org.apache.ibatis.example.domain.MyBlog">
+    select * from my_blog
+    <where>
+      <if test="id!=null">
+        id = #{id}
+      </if>
+      <if test="title!=null">
+        and title = #{title, typeHandler=org.apache.ibatis.example.handler.CustomTypeHandler}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectMyBlog1"
+          parameterType="org.apache.ibatis.example.domain.MyBlog"
+          resultType="org.apache.ibatis.example.domain.MyBlog">
+    select * from my_blog
+    <where>
+      <if test="id!=null">
+        id = #{id}
+      </if>
+      <if test="title!=null">
+        and title = #{title, typeHandler=org.apache.ibatis.example.handler.CustomTypeHandler}
+      </if>
+    </where>
+  </select>
+
+  <update id="updateMyBlog" parameterType="org.apache.ibatis.example.domain.MyBlog">
+    update my_blog
+    <set>
+      <if test="viewCounts!=null">
+        view_counts=#{viewCounts},
+      </if>
+      <if test="likeCounts!=null">
+        like_counts=#{likeCounts},
+      </if>
+    </set>
+    where id=1
+  </update>
+
+
+</mapper>

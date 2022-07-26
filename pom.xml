@@ -293,7 +293,7 @@
 				<plugins>
 					<plugin>
 						<!-- for codecov.io -->
-						<!-- config example: https://github.com/codecov/example-java -->
+						<!-- config org.apache.ibatis.example: https://github.com/codecov/org.apache.ibatis.example-java -->
 						<!-- plugin docs: http://eclemma.org/jacoco/trunk/doc/ -->
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
@@ -319,6 +319,16 @@
 	</profiles>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>3.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.48</version>
+		</dependency>
 		<dependency>
 			<groupId>simple-jndi</groupId>
 			<artifactId>simple-jndi</artifactId>
@@ -635,7 +645,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.calcite</groupId>
-			<artifactId>calcite-example-csv</artifactId>
+			<artifactId>calcite-org.apache.ibatis.example-csv</artifactId>
 			<version>1.13.0</version>
 			<scope>test</scope>
 		</dependency>
