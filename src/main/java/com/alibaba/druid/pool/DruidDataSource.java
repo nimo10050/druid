@@ -1402,6 +1402,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
 
     public DruidPooledConnection getConnectionDirect(long maxWaitMillis) throws SQLException {
         int notFullTimeoutRetryCnt = 0;
+
         for (;;) {
             // handle notFullTimeoutRetry
             DruidPooledConnection poolableConnection;
@@ -1419,6 +1420,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
             }
 
             if (testOnBorrow) {
+                System.out.println("testOnBorrow" + testOnBorrow);
                 boolean validate = testConnectionInternal(poolableConnection.holder, poolableConnection.conn);
                 if (!validate) {
                     if (LOG.isDebugEnabled()) {
@@ -1551,6 +1553,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
     }
 
     private DruidPooledConnection getConnectionInternal(long maxWait) throws SQLException {
+        System.out.println("getConnectionInternal");
         if (closed) {
             connectErrorCountUpdater.incrementAndGet(this);
             throw new DataSourceClosedException("dataSource already closed at " + new Date(closeTimeMillis));
@@ -1673,7 +1676,9 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
                 }
 
                 if (holder != null) {
+                    System.out.println(Thread.currentThread().getName() + " holder ！=null ");
                     if (holder.discard) {
+                        System.out.println(Thread.currentThread().getName() + " holder discard");
                         continue;
                     }
 
@@ -1693,7 +1698,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
             } finally {
                 lock.unlock();
             }
-
+            System.out.println(Thread.currentThread().getName() + " break!!!!");
             break;
         }
 
@@ -1853,6 +1858,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
      * 回收连接
      */
     protected void recycle(DruidPooledConnection pooledConnection) throws SQLException {
+        System.out.println(Thread.currentThread().getName() + " start recycle  connection " );
         final DruidConnectionHolder holder = pooledConnection.holder;
 
         if (holder == null) {
@@ -2000,6 +2006,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
             LOG.error("recyle error", e);
             recycleErrorCountUpdater.incrementAndGet(this);
         }
+        System.out.println(Thread.currentThread().getName() + " recyled a connection " );
     }
 
     public long getRecycleErrorCount() {
@@ -2202,11 +2209,12 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
 
     private DruidConnectionHolder pollLast(long nanos) throws InterruptedException, SQLException {
         long estimate = nanos;
-
+        System.out.println(Thread.currentThread().getName() + " start poll connection");
         for (;;) {
+            System.out.println("poolingCount == 0? " + (poolingCount == 0));
             if (poolingCount == 0) {
                 emptySignal(); // send signal to CreateThread create connection
-
+                System.out.println(Thread.currentThread().getName() + " signal creator thread");
                 if (failFast && isFailContinuous()) {
                     throw new DataSourceNotAvailableException(createError);
                 }
@@ -2223,6 +2231,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
 
                 try {
                     long startEstimate = estimate;
+                    System.out.println(Thread.currentThread().getName() + " max wait " + estimate);
                     estimate = notEmpty.awaitNanos(estimate); // signal by
                                                               // recycle or
                                                               // creator
@@ -2262,7 +2271,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
 
             long waitNanos = nanos - estimate;
             last.setLastNotEmptyWaitNanos(waitNanos);
-
+            System.out.println("return last ");
             return last;
         }
     }
@@ -2776,6 +2785,7 @@ public class DruidDataSource extends DruidAbstractDataSource implements DruidDat
                 PhysicalConnectionInfo connection = null;
 
                 try {
+                    System.out.println(Thread.currentThread().getName() + " createPhysicalConnection ");
                     connection = createPhysicalConnection();
                 } catch (SQLException e) {
                     LOG.error("create connection SQLException, url: " + jdbcUrl + ", errorCode " + e.getErrorCode()
